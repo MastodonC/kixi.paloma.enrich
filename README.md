@@ -1,36 +1,22 @@
 # kixi.paloma.enrich
 
-FIXME: description
-
 ## Installation
+There are number of required JDBC connection strings required before any enrichment is performed.
 
-Download from http://example.com/FIXME.
+```
+export LLPG_DATABASE_URL=jdbc:mssql://
+export NNDR_DATABASE_URL=jdbc:mssql://
+export CIVICA_DATABASE_URL=jdbc:mssql://
+```
 
-## Usage
+Outgoing writes are sent to a Postgres database.
 
-FIXME: explanation
+```
+export KPE_DATABASE_URL=jdbc:postgresql://
+```
 
-    $ java -jar kixi.paloma.enrich-0.1.0-standalone.jar [args]
 
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
-
-## License
-
-Copyright © 2018 FIXME
+Copyright © 2018 Mastodon C Ltd.
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
