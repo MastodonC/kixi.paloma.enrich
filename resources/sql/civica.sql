@@ -3,8 +3,7 @@
 -- :name get-civica-records :? :*
 -- :doc Returns records from Civica mirror.
 select
-      "civica" as data_source
-      ,[Ptr] as premises_id
+      [Ptr] as premises_id
       ,[Ref] as premises_ref
       ,[Name1] as civica_name
 	  ,coalesce(latest_name,[Name1]) as preferred_name

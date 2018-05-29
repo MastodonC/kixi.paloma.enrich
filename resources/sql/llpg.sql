@@ -1,8 +1,8 @@
 /* kixi.paloma.enrich - Base SQL Queries */
 -- :name get-llpg-records :? :*
 -- :doc gets all the LLPG records to be enriched.
-SELECT distinct 'llpg' as [data_source]
-      ,[lpit].[uprn] as UPRN
+SELECT distinct
+      [lpit].[uprn] as UPRN
            ,[lpit].[uprn]  as llpg_uprn
       ,[blpu].[organisation]
       ,[blpu].[start_date]
