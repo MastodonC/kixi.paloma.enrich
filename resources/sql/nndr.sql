@@ -3,7 +3,6 @@
 -- :name get-nndr-records :? :*
 -- :doc Fetches all the nndr records (and joined tables).
 SELECT
-"nndr" as data_source,
 a.*,
 d.propref as nndr_prop_ref,
 vo_propdescrip as property_description,
