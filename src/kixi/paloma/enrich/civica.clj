@@ -13,10 +13,15 @@
        (str/join "\n")))
 
 (defn create-name [m]
-  (-> m
-      (select-keys [:uprn :premises_ref :premises_id :civica_name])
-      (assoc :civica_preferred_name (= (:civica_name m) (:preferred_name m)))
-      (s/rename-keys {:civica_name :business_name})))
+  (let [preferred? (= (-> m :civica_name str/lower-case)
+                      (-> m :preferred_name str/lower-case))
+        m' (if preferred?
+             (assoc m :business_name (:preferred_name m))
+             (assoc m :business_name (:civica_name m)))]
+    (-> m'
+        (select-keys [:uprn :premises_ref :premises_id :business_name])
+        (assoc :civica_preferred_name preferred?)
+        (assoc :data_source "civica"))))
 
 (defn bx-record [acc civica]
   (assoc acc
@@ -24,8 +29,9 @@
          :names (-> (get acc :names #{})
                     (conj (create-name civica)))
          :addresses (-> (get acc :addresses #{})
-                        (conj (-> (select-keys civica [:uprn :postcode :data_source])
-                                  (assoc :address (create-address civica)))))))
+                        (conj (-> (select-keys civica [:uprn :postcode])
+                                  (assoc :address (create-address civica))
+                                  (assoc :data_source "civica"))))))
 
 (defn load-civica-from-csv [filename]
   (->> filename
@@ -33,5 +39,7 @@
        (map (fn [m]
               (reduce-kv (fn [a k v]
                            (assoc a k (str/trim v))) {} m)))
-       (filter #(not-empty (:uprn %)))
+       (remove #(nil? (:uprn %)))
+       (filter #(re-matches #"\d+" (:uprn %)))
+       (remove #(re-matches #".*\*.*" (:premises_ref %)))
        (map #(assoc % :data_source "civica"))))
