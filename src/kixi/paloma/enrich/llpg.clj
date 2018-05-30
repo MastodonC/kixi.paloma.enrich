@@ -7,6 +7,37 @@
 (defn organisation-populated? [v]
   (not (empty? (:organisation v))))
 
+(defn has-address? [llpg]
+  (and (:postcode_master llpg)
+       (not= "NULL" (:postcode_master llpg))))
+
+(defn has-name? [llpg]
+  (and (:organisation llpg)
+       (not= "NULL" (:organisation llpg))))
+
+(defn maybe-add-address [addresses llpg]
+  (if (has-address? llpg)
+    (conj addresses
+          (-> (select-keys llpg [:uprn :postcode_master :data_source])
+              (s/rename-keys {:postcode_master :postcode})
+              (assoc :data_source "llpg"
+                     :premises_ref nil
+                     :address_fields nil)))
+    addresses))
+
+(defn maybe-add-name [names llpg]
+  (if (has-name? llpg)
+    (conj names
+          (-> (select-keys llpg [:uprn :data_source :organisation :start_date :end_date :last_update_date])
+              (s/rename-keys {:organisation :business_name :last_update_date :update_date})
+              (assoc :data_source "llpg"
+                     :premises_ref nil
+                     :civica_preferred_name nil
+                     :update_date nil
+                     :start_date nil
+                     :end_date nil)))
+    names))
+
 (defn bx-record [acc llpg]
   (assoc acc
          :uprn (:uprn llpg)
@@ -14,21 +45,9 @@
          :start_date (:start_date llpg)
          :end_date (:end_date llpg)
          :addresses (-> (get acc :addresses #{})
-                        (conj (-> (select-keys llpg [:uprn :postcode_master :data_source])
-                                  (s/rename-keys {:postcode_master :postcode})
-                                  (assoc :data_source "llpg"
-                                         :premises_ref nil
-                                         :address_fields nil))))
+                        (maybe-add-address llpg))
          :names (-> (get acc :names #{})
-                    (conj (-> (select-keys llpg [:uprn :data_source :organisation :start_date :end_date :last_update_date])
-
-                              (s/rename-keys {:organisation :business_name :last_update_date :update_date})
-                              (assoc :data_source "llpg"
-                                     :premises_ref nil
-                                     :civica_preferred_name nil
-                                     :update_date nil
-                                     :start_date nil
-                                     :end_date nil))))))
+                    (maybe-add-name llpg))))
 
 (defn load-llpg-from-csv [filename]
   (->> filename
