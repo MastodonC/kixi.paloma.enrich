@@ -15,16 +15,18 @@
          :end_date (:end_date llpg)
          :addresses (-> (get acc :addresses #{})
                         (conj (-> (select-keys llpg [:uprn :postcode_master :data_source])
-                                  (s/rename-keys {:postcode_master :postcode}))))
+                                  (s/rename-keys {:postcode_master :postcode})
+                                  (assoc :data_source "llpg"))))
          :names (-> (get acc :names #{})
                     (conj (-> (select-keys llpg [:uprn :data_source :organisation :start_date :end_date :last_update_date])
-                              (s/rename-keys {:organisation :business_name :last_update_date :update_date}))))))
+                              (s/rename-keys {:organisation :business_name :last_update_date :update_date})
+                              (assoc :data_source "llpg"))))))
 
 (defn load-llpg-from-csv [filename]
   (->> filename
        kf/load-data
-       (filter #(not-empty (:uprn %)))
-       (map #(assoc % :data_source "llpg"))))
+       (remove #(nil? (:uprn %)))
+       (filter #(re-matches #"\d+" (:uprn %)))))
 
 
 (comment

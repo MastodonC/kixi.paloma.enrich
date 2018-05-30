@@ -12,11 +12,15 @@
          :nndr_prop_ref (:nndr_prop_ref nndr)
          :names (-> (get acc :names #{})
                     (conj (-> (select-keys nndr [:account_holder1 :data_source :last_updated])
-                              (s/rename-keys {:account_holder1 :business_name :last_updated :update_date}))))))
+                              (s/rename-keys {:account_holder1 :business_name :last_updated :update_date})
+                              (assoc :data_source "nndr"))))))
 
 
-(defn load-nndr-from-csv [filename]
+(defn load-nndr-from-csv [nndr-lookup filename]
   (->> filename
        kf/load-data
-       (filter #(not-empty (:nndr_prop_ref %)))
+       (remove #(nil? (:nndr_prop_ref %)))
+       (filter #(re-matches #"\d+" (:nndr_prop_ref %)))
+       (map #(assoc % :uprn (get nndr-lookup (:nndr_prop_ref %))))
+       (remove #(nil? (:uprn %)))
        (map #(assoc % :data_source "nndr"))))

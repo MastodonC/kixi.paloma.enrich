@@ -22,6 +22,7 @@
 (defmethod merge-record :civica [acc event]
   (civica/bx-record acc event))
 
+
 (defmulti preferred-key data-source)
 
 (defmethod preferred-key :llpg [_ event]
@@ -33,4 +34,4 @@
 (defmethod preferred-key :nndr [lookup event]
   (-> event
       :nndr_prop_ref
-      (lookup)))
+      (get lookup)))
