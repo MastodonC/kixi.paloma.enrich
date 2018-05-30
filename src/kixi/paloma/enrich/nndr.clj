@@ -13,7 +13,13 @@
          :names (-> (get acc :names #{})
                     (conj (-> (select-keys nndr [:account_holder1 :data_source :last_updated])
                               (s/rename-keys {:account_holder1 :business_name :last_updated :update_date})
-                              (assoc :data_source "nndr"))))))
+                              (assoc :data_source "nndr"
+                                     :uprn (get nndr :uprn (get acc :uprn))
+                                     :premises_ref nil
+                                     :civica_preferred_name nil
+                                     :start_date nil
+                                     :end_date nil
+                                     :update_date nil))))))
 
 
 (defn load-nndr-from-csv [nndr-lookup filename]
