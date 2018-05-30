@@ -59,6 +59,3 @@
   (def bx (csv->business-index csv-sources))
 
   )
-
-
-  )
