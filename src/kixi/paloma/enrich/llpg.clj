@@ -2,7 +2,8 @@
   ;; (:require [kixi.palmoma.enrich.db.llpg :as llpg-db])
   (:require [kixi.paloma.enrich.file :as kf]
             [clojure.string :as str]
-            [clojure.set :as s]))
+            [clojure.set :as s]
+            [kixi.paloma.enrich.string :as pes]))
 
 (defn organisation-populated? [v]
   (not (empty? (:organisation v))))
@@ -20,6 +21,8 @@
     (conj addresses
           (-> (select-keys llpg [:uprn :postcode_master :data_source])
               (s/rename-keys {:postcode_master :postcode})
+              (pes/truncate-val :uprn 40)
+              (pes/truncate-val :postcode 20)
               (assoc :data_source "llpg"
                      :premises_ref nil
                      :address_fields nil)))
@@ -35,19 +38,23 @@
                      :civica_preferred_name nil
                      :update_date nil
                      :start_date nil
-                     :end_date nil)))
+                     :end_date nil)
+              (pes/truncate-val :uprn 40)
+              (pes/truncate-val :business_name 255)))
     names))
 
 (defn bx-record [acc llpg]
-  (assoc acc
-         :uprn (:uprn llpg)
-         :nndr_prop_ref (:nndr_prop_ref llpg)
-         :start_date (:start_date llpg)
-         :end_date (:end_date llpg)
-         :addresses (-> (get acc :addresses #{})
-                        (maybe-add-address llpg))
-         :names (-> (get acc :names #{})
-                    (maybe-add-name llpg))))
+  (-> acc
+      (assoc :uprn (:uprn llpg)
+             :nndr_prop_ref (:nndr_prop_ref llpg)
+             :start_date (:start_date llpg)
+             :end_date (:end_date llpg)
+             :addresses (-> (get acc :addresses #{})
+                            (maybe-add-address llpg))
+             :names (-> (get acc :names #{})
+                        (maybe-add-name llpg)))
+      (pes/truncate-val :uprn 40)
+      (pes/truncate-val :nndr_prop_ref 40)))
 
 (defn load-llpg-from-csv [filename]
   (->> filename
