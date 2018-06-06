@@ -1,7 +1,8 @@
 (ns kixi.paloma.enrich.civica
   (:require [kixi.paloma.enrich.file :as kf]
             [clojure.string :as str]
-            [clojure.set :as s]))
+            [clojure.set :as s]
+            [kixi.paloma.enrich.string :as pes]))
 
 ;; Fields from Civica occassionally have white space on either side so it needs stripping out
 (defn organisation-populated? [v]
@@ -20,6 +21,11 @@
              (assoc m :business_name (:civica_name m)))]
     (-> m'
         (select-keys [:uprn :premises_ref :premises_id :business_name])
+        (pes/truncate-val :uprn 40)
+        (pes/truncate-val :postcode 20)
+        (pes/truncate-val :premises_ref 40)
+        (pes/truncate-val :premises_id 40)
+        (pes/truncate-val :business_name 255)
         (assoc :civica_preferred_name preferred?
                :data_source "civica"
                :start_date nil
@@ -27,18 +33,19 @@
                :update_date nil))))
 
 (defn bx-record [acc civica]
-  (assoc acc
-         :uprn (:uprn civica)
-         :nndr_prop_ref nil
-         :start_date nil
-         :end_date nil
-         :names (-> (get acc :names #{})
-                    (conj (create-name civica)))
-         :addresses (-> (get acc :addresses #{})
-                        (conj (-> (select-keys civica [:uprn :postcode])
-                                  (assoc :address_fields (create-address civica)
-                                         :data_source "civica"
-                                         :premises_ref nil))))))
+  (-> acc
+      (assoc :uprn (:uprn civica)
+             :nndr_prop_ref nil
+             :start_date nil
+             :end_date nil
+             :names (-> (get acc :names #{})
+                        (conj (create-name civica)))
+             :addresses (-> (get acc :addresses #{})
+                            (conj (-> (select-keys civica [:uprn :postcode])
+                                      (assoc :address_fields (create-address civica)
+                                             :data_source "civica"
+                                             :premises_ref nil)))))
+      (pes/truncate-val :uprn 40)))
 
 (defn load-civica-from-csv [filename]
   (->> filename
