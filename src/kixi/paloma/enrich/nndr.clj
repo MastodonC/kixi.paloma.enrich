@@ -8,8 +8,8 @@
   (not (empty? (str/trim (:account_holder1 v)))))
 
 (defn create-name [nndr]
-  (-> (select-keys nndr [:account_holder1 :data_source :last_updated])
-      (s/rename-keys {:account_holder1 :business_name :last_updated :update_date})
+  (-> (select-keys nndr [:business_name :data_source :last_updated])
+      (s/rename-keys {:last_updated :update_date})
       (assoc :data_source "nndr"
              :uprn (get nndr :uprn)
              :premises_ref nil

@@ -60,7 +60,8 @@
   (->> filename
        kf/load-data
        (remove #(nil? (:uprn %)))
-       (filter #(re-matches #"\d+" (:uprn %)))))
+       (filter #(re-matches #"\d+" (:uprn %)))
+       (map #(assoc % :data_source "llpg"))))
 
 
 (comment
