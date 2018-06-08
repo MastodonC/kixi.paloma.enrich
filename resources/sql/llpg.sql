@@ -4,7 +4,7 @@
 
 SELECT distinct
  --'llpg' as [data_source]
-      [lpit].[uprn] as UPRN
+      [lpit].[uprn] as uprn
       ,[blpu].[organisation]
       ,[blpu].[start_date]
       ,[blpu].[entry_date]

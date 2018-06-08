@@ -9,17 +9,17 @@ select
       ,[Name1] as civica_name
 	  ,coalesce(latest_name,[Name1]) as preferred_name
     --  ,[Namecode1]
-      ,[Name2]
+      ,[Name2] as name2
 --,[Namecode2]
-      ,[Lpikey]
-      ,[Housename]
-      ,[Houseno]
-      ,[Add1]
-      ,[Add2]
-      ,[Add3]
-      ,[Add4]
-      ,[Postcode]
-      ,prem.[Uprn] as UPRN
+      ,[Lpikey] as lpikey
+      ,[Housename] as housename
+      ,[Houseno] as houseno
+      ,[Add1] as add1
+      ,[Add2] as add2
+      ,[Add3] as add3
+      ,[Add4] as add4
+      ,[Postcode] as postcode
+      ,prem.[Uprn] as uprn
 	  ,Ladate as last_seen_date
 	  ,null_ref_count
 	  ,prem_count
