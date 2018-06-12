@@ -6,10 +6,12 @@
 (defn data-source [_ event]
   (keyword (:data_source event)))
 
+;; From SQL uprns are java Double values from JDBC and come out as 1.00023544877E11
+;; .longValue gets the raw value and then we turn that into a string for the lookup table.
 (defn llpg-nndr-lookup [sm]
   (into {}
         (map (fn [m]
-               [(:nndr_prop_ref m) (:uprn m)]) sm)))
+               [(:nndr_prop_ref m) (str (.longValue (:uprn m)))]) sm)))
 
 (defmulti merge-record data-source)
 
