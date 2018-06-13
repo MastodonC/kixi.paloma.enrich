@@ -5,7 +5,9 @@
             [kixi.paloma.enrich.events :as events]
             [kixi.paloma.enrich.db.llpg :as llpg-db]
             [kixi.paloma.enrich.db.civica :as civica-db]
-            [kixi.paloma.enrich.db.nndr :as nndr-db])
+            [kixi.paloma.enrich.db.nndr :as nndr-db]
+            [kixi.paloma.enrich.string :as pes]
+            [clojure.string :as str])
   (:gen-class))
 
 
@@ -24,18 +26,29 @@
         nndr-data (nndr/load-nndr-from-csv nndr-lookup nndr-source)]
     (reduce reduce-event {} (concat llpg-data civica-data nndr-data))))
 
+(defn db->civica []
+  (->> (civica-db/get-civica-records)
+       (civica/clean-records)
+       (map #(assoc % :data_source "civica"))))
+
+(defn db->llpg []
+  (->> (llpg-db/get-llpg-records)
+       (map #(update % :uprn (fn [d] (pes/double->string d))))
+       (map #(assoc % :data_source "llpg"))))
+
+(defn db->nndr []
+  (->> (nndr-db/get-nndr-records)
+       (remove #(nil? (:nndr_prop_ref %)))
+       (filter #(re-matches #"\d+" (:nndr_prop_ref %)))
+       (map #(assoc % :uprn (get nndr-lookup (:nndr_prop_ref %))))
+       (remove #(nil? (:uprn %)))
+       (map #(assoc % :data_source "nndr"))))
+
 (defn db->business-index []
-  (let [llpg-data (->> (llpg-db/get-llpg-records)
-                       (map #(assoc % :data_source "llpg")))
+  (let [llpg-data (db->llpg)
         nndr-lookup (events/llpg-nndr-lookup llpg-data)
-        civica-data (->> (civica-db/get-civica-records)
-                         (map #(assoc % :data_source "civica")))
-        nndr-data (->> (nndr-db/get-nndr-records)
-                       (remove #(nil? (:nndr_prop_ref %)))
-                       (filter #(re-matches #"\d+" (:nndr_prop_ref %)))
-                       (map #(assoc % :uprn (get nndr-lookup (:nndr_prop_ref %))))
-                       (remove #(nil? (:uprn %)))
-                       (map #(assoc % :data_source "nndr")))]
+        civica-data (db->civica)
+        nndr-data (db->nndr)]
     (reduce reduce-event {} (concat llpg-data civica-data nndr-data))))
 
 (defn -main
