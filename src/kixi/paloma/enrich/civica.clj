@@ -8,6 +8,14 @@
 (defn organisation-populated? [v]
   (not (empty? (str/trim (:civica_name v)))))
 
+(defn clean-records [sm]
+  (->> sm
+       (map (fn [m]
+              (reduce-kv (fn [a k v]
+                           (assoc a k (if (string? v)
+                                        (str/trim v)
+                                        v))) {} m)))))
+
 (defn create-address [m]
   (->> ((juxt :houseno :housename :add1 :add2 :add3 :add4 :postcode) m)
        (filter not-empty)
