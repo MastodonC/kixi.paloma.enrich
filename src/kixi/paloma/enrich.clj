@@ -29,6 +29,7 @@
 (defn db->civica []
   (->> (civica-db/get-civica-records)
        (civica/clean-records)
+       (map #(update % :premises_id (fn [i] (pes/integer->string i))))
        (map #(assoc % :data_source "civica"))))
 
 (defn db->llpg []
@@ -36,7 +37,7 @@
        (map #(update % :uprn (fn [d] (pes/double->string d))))
        (map #(assoc % :data_source "llpg"))))
 
-(defn db->nndr []
+(defn db->nndr [nndr-lookup]
   (->> (nndr-db/get-nndr-records)
        (remove #(nil? (:nndr_prop_ref %)))
        (filter #(re-matches #"\d+" (:nndr_prop_ref %)))
@@ -48,7 +49,7 @@
   (let [llpg-data (db->llpg)
         nndr-lookup (events/llpg-nndr-lookup llpg-data)
         civica-data (db->civica)
-        nndr-data (db->nndr)]
+        nndr-data (db->nndr nndr-lookup)]
     (reduce reduce-event {} (concat llpg-data civica-data nndr-data))))
 
 (defn -main
