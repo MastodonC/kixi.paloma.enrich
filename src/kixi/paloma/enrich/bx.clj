@@ -38,13 +38,17 @@
   (bxdb/create-address-view! {:atname (str "address_" datestamp)})
   (bxdb/create-business-name-view! {:bntname (str "business_name_" datestamp)}))
 
+
+(defn do-inserts! [bx datestamp]
+  (run! (fn [[_ bxr]]
+          (do
+            (persist-addresses (:addresses bxr) (str "address_" datestamp))
+            (persist-business-names (:names bxr) (str "business_name_" datestamp))
+            (persist-business-record bxr (str "business_" datestamp)))) bx))
+
 (defn persist-bx-to-db [bx]
   (log/info "Persisting Business Index data.")
   (let [datestamp (f/unparse (f/formatter :basic-date) (t/now))]
     (create-tables datestamp)
-    (run! (fn [[_ bxr]]
-            (do
-              (persist-addresses (:addresses bxr) (str "address_" datestamp))
-              (persist-business-names (:names bxr) (str "business_name_" datestamp))
-              (persist-business-record bxr (str "business_" datestamp)))) bx)
+    (do-inserts! bx datestamp)
     (create-views datestamp)))

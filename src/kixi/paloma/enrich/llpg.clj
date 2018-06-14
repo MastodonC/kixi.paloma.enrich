@@ -19,13 +19,12 @@
 (defn maybe-add-address [addresses llpg]
   (if (has-address? llpg)
     (conj addresses
-          (-> (select-keys llpg [:uprn :postcode_master :data_source])
-              (s/rename-keys {:postcode_master :postcode})
+          (-> (select-keys llpg [:uprn :postcode_master :bs7666_address :data_source])
+              (s/rename-keys {:postcode_master :postcode :bs7666_address :address_fields})
               (pes/truncate-val :uprn 40)
               (pes/truncate-val :postcode 20)
               (assoc :data_source "llpg"
-                     :premises_ref nil
-                     :address_fields nil)))
+                     :premises_ref nil)))
     addresses))
 
 (defn maybe-add-name [names llpg]
@@ -36,9 +35,9 @@
               (assoc :data_source "llpg"
                      :premises_ref nil
                      :civica_preferred_name nil
-                     :update_date nil
                      :start_date nil
-                     :end_date nil)
+                     :end_date nil
+                     :update_date nil)
               (pes/truncate-val :uprn 40)
               (pes/truncate-val :business_name 255)))
     names))
