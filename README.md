@@ -12,7 +12,7 @@ export CIVICA_DATABASE_URL=jdbc:mssql://
 Outgoing writes are sent to a Postgres database.
 
 ```
-export KPE_DATABASE_URL=jdbc:postgresql://
+export BX_DATABASE_URL=jdbc:postgresql://
 ```
 
 
