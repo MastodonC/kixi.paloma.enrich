@@ -1,8 +1,5 @@
 (ns kixi.paloma.enrich.string)
 
-(defn double->string [d]
-  (str (.longValue d)))
-
 (defn truncate [s n]
   (if (< n (count s))
     (apply str (take n s))
