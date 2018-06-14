@@ -23,6 +23,7 @@
               (s/rename-keys {:postcode_master :postcode :bs7666_address :address_fields})
               (pes/truncate-val :uprn 40)
               (pes/truncate-val :postcode 20)
+              (pes/truncate-val :address_fields 255)
               (assoc :data_source "llpg"
                      :premises_ref nil)))
     addresses))
