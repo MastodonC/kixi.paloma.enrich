@@ -43,12 +43,3 @@ CREATE TABLE :i:atname (
        premises_ref varchar(40),
        address_fields varchar(255),
        postcode varchar(20));
-
--- :name create-business-view! :! :n
-CREATE OR REPLACE VIEW business AS SELECT * FROM :i:btname
-
--- :name create-address-view! :! :n
-CREATE OR REPLACE VIEW address AS SELECT * FROM :i:atname
-
--- :name create-business-name-view! :! :n
-CREATE OR REPLACE VIEW business_name AS SELECT * FROM :i:bntname
