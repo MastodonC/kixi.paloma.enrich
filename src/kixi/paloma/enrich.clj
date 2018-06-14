@@ -7,8 +7,6 @@
             [kixi.paloma.enrich.db.civica :as civica-db]
             [kixi.paloma.enrich.db.nndr :as nndr-db]
             [kixi.paloma.enrich.string :as pes]
-            [kixi.paloma.enrich.bx :as bxe]
-            [taoensso.timbre :as log]
             [clojure.string :as str])
   (:gen-class))
 
@@ -56,9 +54,9 @@
 
 (defn -main
   [& args]
-  (log/info "Running Business Index ETL")
   (let [bx (db->business-index)]
-    (bxe/persist-bx-to-db bx)))
+    (spit "testenrich.edn" (pr-str bx))))
+
 
 (comment
 
