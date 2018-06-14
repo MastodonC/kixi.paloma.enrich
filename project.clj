@@ -12,7 +12,6 @@
                  [com.taoensso/timbre "4.10.0"]
                  [com.layerware/hugsql "0.4.8"]
                  [org.postgresql/postgresql "42.1.4"] ;; Driver for the Postgres BX DB.
-
                  ;;[net.sourceforge.jtds/jtds "1.3.1"] ;; Open source version of the SQL Server 2012 JDBC Drivers.
                  [com.microsoft.sqlserver/mssql-jdbc "6.4.0.jre8"]]
   :main ^:skip-aot kixi.paloma.enrich

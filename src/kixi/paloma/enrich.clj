@@ -2,10 +2,7 @@
   (:require [kixi.paloma.enrich.civica :as civica]
             [kixi.paloma.enrich.nndr :as nndr]
             [kixi.paloma.enrich.llpg :as llpg]
-            [kixi.paloma.enrich.events :as events]
-            [kixi.paloma.enrich.db.llpg :as llpg-db]
-            [kixi.paloma.enrich.db.civica :as civica-db]
-            [kixi.paloma.enrich.db.nndr :as nndr-db])
+            [kixi.paloma.enrich.events :as events])
   (:gen-class))
 
 
@@ -24,24 +21,10 @@
         nndr-data (nndr/load-nndr-from-csv nndr-lookup nndr-source)]
     (reduce reduce-event {} (concat llpg-data civica-data nndr-data))))
 
-(defn db->business-index []
-  (let [llpg-data (->> (llpg-db/get-llpg-records)
-                       (map #(assoc % :data_source "llpg")))
-        nndr-lookup (events/llpg-nndr-lookup llpg-data)
-        civica-data (->> (civica-db/get-civica-records)
-                         (map #(assoc % :data_source "civica")))
-        nndr-data (->> (nndr-db/get-nndr-records)
-                       (remove #(nil? (:nndr_prop_ref %)))
-                       (filter #(re-matches #"\d+" (:nndr_prop_ref %)))
-                       (map #(assoc % :uprn (get nndr-lookup (:nndr_prop_ref %))))
-                       (remove #(nil? (:uprn %)))
-                       (map #(assoc % :data_source "nndr")))]
-    (reduce reduce-event {} (concat llpg-data civica-data nndr-data))))
-
 (defn -main
+  "Main function entry point."
   [& args]
-  (let [bx (db->business-index)]
-    (spit "testenrich.edn" (pr-str bx))))
+  )
 
 
 (comment
