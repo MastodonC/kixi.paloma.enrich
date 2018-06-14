@@ -35,10 +35,7 @@
               (s/rename-keys {:organisation :business_name :last_update_date :update_date})
               (assoc :data_source "llpg"
                      :premises_ref nil
-                     :civica_preferred_name nil
-                     :start_date nil
-                     :end_date nil
-                     :update_date nil)
+                     :civica_preferred_name nil)
               (pes/truncate-val :uprn 40)
               (pes/truncate-val :business_name 255)))
     names))
