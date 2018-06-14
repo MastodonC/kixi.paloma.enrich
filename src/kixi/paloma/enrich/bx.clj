@@ -31,6 +31,13 @@
   (bxdb/create-address-table! {:atname (str "address_" datestamp)}))
 
 
+
+(defn create-views [datestamp]
+  (log/info "Updating table views.")
+  (bxdb/create-business-view! {:btname (str "business_" datestamp)})
+  (bxdb/create-address-view! {:atname (str "address_" datestamp)})
+  (bxdb/create-business-name-view! {:bntname (str "business_name_" datestamp)}))
+
 (defn persist-bx-to-db [bx]
   (log/info "Persisting Business Index data.")
   (let [datestamp (f/unparse (f/formatter :basic-date) (t/now))]
@@ -39,4 +46,5 @@
             (do
               (persist-addresses (:addresses bxr) (str "address_" datestamp))
               (persist-business-names (:names bxr) (str "business_name_" datestamp))
-              (persist-business-record bxr (str "business_" datestamp)))) bx)))
+              (persist-business-record bxr (str "business_" datestamp)))) bx)
+    (create-views datestamp)))
