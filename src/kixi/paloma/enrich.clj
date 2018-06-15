@@ -38,9 +38,9 @@
 (defn db->llpg []
   (->> (llpg-db/get-llpg-records)
        (map #(update % :organisation (fn [s] (pes/capitalise-words s))))
-       (map #(update % :start_date (fn [i] (ped/convert-to-date i))))
-       (map #(update % :end_date (fn [i] (ped/convert-to-date i))))
-       (map #(update % :last_update_date (fn [i] (ped/convert-to-date i))))
+       (map #(update % :start_date (fn [i] (ped/formatted-int->date i))))
+       (map #(update % :end_date (fn [i] (ped/formatted-int->date i))))
+       (map #(update % :last_update_date (fn [i] (ped/formatted-int->date i))))
        (map #(update % :uprn (fn [d] (pes/double->string d))))
        (map #(assoc % :data_source "llpg"))))
 

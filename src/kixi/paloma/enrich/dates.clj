@@ -2,7 +2,7 @@
   (:require [clj-time.core :as t]
             [clj-time.format :as f]))
 
-(defn convert-to-date [i]
+(defn formatted-int->date [i]
   (cond
     (= 0 i) nil
     (= nil i) nil
