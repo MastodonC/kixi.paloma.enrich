@@ -12,7 +12,7 @@ SELECT distinct
       ,[blpu].[end_date]
      ,pc.Postal_Address as address
 	 ,pc.postcode as postcode_master
-    --  ,[lpit].[bs7666_address]
+     ,[lpit].[bs7666_address]
 	  ,[CROSS_REFERENCE] as nndr_prop_ref
 	--  ,1 as counter_llpg_record
 	  ,blp.USAGE as llpg_usage

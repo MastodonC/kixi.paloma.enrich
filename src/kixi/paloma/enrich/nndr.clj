@@ -15,8 +15,7 @@
              :premises_ref nil
              :civica_preferred_name nil
              :start_date nil
-             :end_date nil
-             :update_date nil)
+             :end_date nil)
       (pes/truncate-val :uprn 40)))
 
 (defn bx-record [acc nndr]

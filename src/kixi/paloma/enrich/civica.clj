@@ -28,7 +28,8 @@
              (assoc m :business_name (:preferred_name m))
              (assoc m :business_name (:civica_name m)))]
     (-> m'
-        (select-keys [:uprn :premises_ref :premises_id :business_name])
+        (select-keys [:uprn :premises_ref :premises_id :business_name :last_activity])
+        (s/rename-keys {:last_activity :update_date})
         (pes/truncate-val :uprn 40)
         (pes/truncate-val :postcode 20)
         (pes/truncate-val :premises_ref 40)
@@ -37,8 +38,7 @@
         (assoc :civica_preferred_name preferred?
                :data_source "civica"
                :start_date nil
-               :end_date nil
-               :update_date nil))))
+               :end_date nil))))
 
 (defn bx-record [acc civica]
   (-> acc

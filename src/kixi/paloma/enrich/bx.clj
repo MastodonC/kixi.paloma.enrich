@@ -2,7 +2,8 @@
   (:require [kixi.paloma.enrich.db.bx :as bxdb]
             [taoensso.timbre :as log]
             [clj-time.core :as t]
-            [clj-time.format :as f]))
+            [clj-time.format :as f]
+            [clj-time.jdbc]))
 
 (defn persist-business-record [{:keys [uprn nndr_prop_ref start_date end_date]} tablename]
   (log/infof "Writing business record for %s" uprn)
